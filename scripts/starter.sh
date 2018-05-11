@@ -18,15 +18,54 @@
 ##
 set -e
 
-#To avoid docker volume permission problems
-sudo chmod o+rwx /data
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+KERBEROS_SERVER=${KERBEROS_SERVER:-krb5}
+ISSUER_SERVER=${ISSUER_SERVER:-$KERBEROS_SERVER\:8081}
+
+while true
+do
+  STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://$ISSUER_SERVER/keytab/test/test)
+  if [ $STATUS -eq 200 ]; then
+    echo "Got 200, KDC service ready!!"
+    break
+  else
+    echo "Got $STATUS :( Not done yet..."
+  fi
+  sleep 5
+done
+
+export HOST_NAME=`hostname -f`
+for NAME in ${KERBEROS_KEYTABS}; do
+   echo "Download $NAME/$HOSTNAME@EXAMPLE.COM keytab file to $CONF_DIR/$NAME.keytab"
+   wget http://$ISSUER_SERVER/keytab/$HOST_NAME/$NAME -O $CONF_DIR/$NAME.keytab
+   KERBEROS_ENABLED=true
+done
+
+#for NAME in ${KERBEROS_KEYSTORES}; do
+#   echo "Download keystore files for $NAME"
+#   wget http://$ISSUER_SERVER/keystore/$NAME -O $CONF_DIR/$NAME.keystore
+#   KERBEROS_ENABLED=true
+#   KEYSTORE_DOWNLOADED=true
+#done
+
+#if [ -n "$KEYSTORE_DOWNLOADED" ]; then
+#  wget http://$ISSUER_SERVER/keystore/$HOST_NAME -O $CONF_DIR/$HOST_NAME.keystore
+#  wget http://$ISSUER_SERVER/truststore -O $CONF_DIR/truststore
+#fi
+
+if [ -n "$KERBEROS_ENABLED" ]; then
+   cat $DIR/krb5.conf |  sed "s/SERVER/$KERBEROS_SERVER/g" | sudo tee /etc/krb5.conf
+fi
+
+
+#To avoid docker volume permission problems
+sudo chmod o+rwx /data
 
 $DIR/envtoconf.py --destination /opt/hadoop/etc/hadoop
 
 if [ -n "$SLEEP_SECONDS" ]; then
-   echo "Sleeping for $SLEEP_SECONDS seconds"
+   #echo "Sleeping for $SLEEP_SECONDS seconds"
    sleep $SLEEP_SECONDS
 fi
 
@@ -65,5 +104,9 @@ if [ -n "$ENSURE_KSM_INITIALIZED" ]; then
    fi
 fi
 
-
+#while :
+#do
+#	echo ".."
+#	sleep 100
+#done
 $@

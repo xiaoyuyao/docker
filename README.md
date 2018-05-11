@@ -15,24 +15,21 @@
   limitations under the License.
 -->
 
-# Apache Hadoop base image
+# Docker Image for running secure Apache Hadoop Ozone base image
 
-This is the definition of the Apache Hadoop base image. It doesn't use any Hadoop distribution just the scripts to run any Hadoop from source or from a prebuild package.
+This is the definition of the Apache Hadoop Ozone base image. It doesn't use any Hadoop distribution just the scripts to run any Hadoop from source or from a prebuild package.
 
-## Build
 
-To create a local version of this image use the following command:
-
-```
-docker build -t apache/hadoop-runner .
-```
 
 ## Usage
 
-Do a full build on the HDFS-7240 branch of apache hadoop repositry
+Do a full build checkout hadoop repo and build using below maven command.
+```
+mvn clean install  -Pdist -Phdds -DskipTests=true -Dmaven.javadoc.skip=true -Dtar
+```
 
 ```
-cd dev-support/compose/ozone
+cd dev-support/compose/ozone-secure
 docker-compose up -d
 ```
 
