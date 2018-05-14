@@ -23,6 +23,14 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 KERBEROS_SERVER=${KERBEROS_SERVER:-krb5}
 ISSUER_SERVER=${ISSUER_SERVER:-$KERBEROS_SERVER\:8081}
 
+echo "Setting up enviorment!!"
+echo "KDC ISSUER_SERVER => $ISSUER_SERVER"
+
+if [ -n "$SLEEP_SECONDS" ]; then
+   echo "Sleeping for $SLEEP_SECONDS seconds"
+   sleep $SLEEP_SECONDS
+fi
+
 while true
 do
   STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://$ISSUER_SERVER/keytab/test/test)
@@ -30,7 +38,7 @@ do
     echo "Got 200, KDC service ready!!"
     break
   else
-    echo "Got $STATUS :( Not done yet..."
+    echo "Got $STATUS :( KDC service not ready yet..."
   fi
   sleep 5
 done
@@ -63,12 +71,6 @@ fi
 sudo chmod o+rwx /data
 
 $DIR/envtoconf.py --destination /opt/hadoop/etc/hadoop
-
-if [ -n "$SLEEP_SECONDS" ]; then
-   #echo "Sleeping for $SLEEP_SECONDS seconds"
-   sleep $SLEEP_SECONDS
-fi
-
 
 if [ -n "$ENSURE_NAMENODE_DIR" ]; then
    CLUSTERID_OPTS=""
@@ -104,9 +106,4 @@ if [ -n "$ENSURE_KSM_INITIALIZED" ]; then
    fi
 fi
 
-#while :
-#do
-#	echo ".."
-#	sleep 100
-#done
 $@
