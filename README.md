@@ -27,9 +27,14 @@ Do a full build checkout hadoop repo and build using below maven command.
 ```
 mvn clean install  -Pdist -Phdds -DskipTests=true -Dmaven.javadoc.skip=true -Dtar
 ```
-
+For secure cluster
 ```
 cd dev-support/compose/ozone-secure
+docker-compose up -d
+```
+For unsecure cluster
+```
+cd dev-support/compose/ozone
 docker-compose up -d
 ```
 
