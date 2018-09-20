@@ -95,4 +95,5 @@ if [ -n "$ENSURE_KSM_INITIALIZED" ]; then
    fi
 fi
 
+echo 'setup finished'
 $@
