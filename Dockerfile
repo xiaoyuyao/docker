@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y  jq curl python sudo && apt-get clean
 
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64
 RUN chmod +x /usr/local/bin/dumb-init
-RUN mkdir -p /etc/security/keytabs && chmod -R a+wr /etc/security/keytabs 
+RUN mkdir -p /etc/security/keytabs && chmod -R a+wr /etc/security/keytabs
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
 ENV PATH $PATH:/opt/hadoop/bin
 
@@ -29,7 +29,7 @@ ADD scripts/krb5.conf /etc/
 RUN apt-get install -y krb5-user
 
 RUN addgroup --gid 1000 hadoop
-RUN adduser --disabled-password --gecos "" --uid 1000 hadoop --gid 100 --home /opt/hadoop
+RUN adduser --disabled-password --gecos "" --uid 1000 hadoop --gid 1000 --home /opt/hadoop
 RUN echo "hadoop ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ADD scripts /opt/
 

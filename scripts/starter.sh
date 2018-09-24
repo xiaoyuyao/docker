@@ -27,7 +27,7 @@ if [ -n "$KERBEROS_ENABLED" ]; then
 	KERBEROS_SERVER=${KERBEROS_SERVER:-krb5}
 	ISSUER_SERVER=${ISSUER_SERVER:-$KERBEROS_SERVER\:8081}
 
-	
+
 	echo "KDC ISSUER_SERVER => $ISSUER_SERVER"
 
 	if [ -n "$SLEEP_SECONDS" ]; then
@@ -54,7 +54,7 @@ if [ -n "$KERBEROS_ENABLED" ]; then
 	   wget http://$ISSUER_SERVER/keytab/$HOST_NAME/$NAME -O $CONF_DIR/$NAME.keytab
 	   KERBEROS_ENABLED=true
 	done
-	
+
 	cat $DIR/krb5.conf |  sed "s/SERVER/$KERBEROS_SERVER/g" | sudo tee /etc/krb5.conf
 fi
 
@@ -91,7 +91,7 @@ if [ -n "$ENSURE_KSM_INITIALIZED" ]; then
                 # Could be removed after HDFS-13203
                 echo "Waiting 15 seconds for SCM startup"
                 sleep 15
-      /opt/hadoop/bin/ozone ksm -createObjectStore
+      /opt/hadoop/bin/ozone om -createObjectStore
    fi
 fi
 
